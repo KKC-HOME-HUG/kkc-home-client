@@ -1,29 +1,37 @@
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
-export default function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="navbar border-b border-base-200 bg-base-100">
-        <div className="flex-1">
-          <Link href="/" className="btn btn-ghost text-xl">
-            🏠 KKC Home Hug
+      <header className="sticky top-0 z-30 border-b border-base-300 bg-base-100/90 shadow-sm backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
+          <Link href="/" aria-label="KKC Home Hug Property">
+            <Logo size={38} />
           </Link>
-        </div>
-        <div className="flex-none gap-1">
-          <Link href="/admin" className="btn btn-ghost btn-sm">
-            ผู้ดูแล
-          </Link>
-          <ThemeToggle />
+          <nav className="ml-8 hidden gap-1 md:flex">
+            <Link href="/properties?kind=sale" className="btn btn-ghost btn-sm">ซื้อ</Link>
+            <Link href="/properties?kind=rent" className="btn btn-ghost btn-sm">เช่า</Link>
+            <Link href="/properties" className="btn btn-ghost btn-sm">ทรัพย์ทั้งหมด</Link>
+          </nav>
+          <div className="ml-auto flex items-center gap-1">
+            <ThemeToggle />
+            <Link href="/admin" className="btn btn-primary btn-sm">ผู้ดูแล</Link>
+          </div>
         </div>
       </header>
+
       <main className="flex-1">{children}</main>
-      <footer className="footer footer-center bg-base-200 p-4 text-base-content">
-        <p>© KKC Home Hug — อสังหาริมทรัพย์ขอนแก่น</p>
+
+      <footer className="border-t border-base-200 bg-base-200">
+        <div className="mx-auto max-w-6xl px-4 py-10 text-sm">
+          <Logo size={34} />
+          <p className="mt-3 max-w-md text-base-content/60">
+            แพลตฟอร์มอสังหาริมทรัพย์ขอนแก่น — ซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน และอาคารพาณิชย์
+          </p>
+          <p className="mt-6 text-base-content/40">© 2026 KKC Home Hug Property</p>
+        </div>
       </footer>
     </div>
   );

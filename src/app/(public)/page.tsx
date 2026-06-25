@@ -1,45 +1,85 @@
-import { api } from "@/lib/api";
+import Link from "next/link";
+import { LuSearch } from "react-icons/lu";
+import { searchProperties } from "@/lib/properties";
+import PropertyCard from "@/components/property/PropertyCard";
 
-type Health = { status: string; service: string; uptime: number };
-
-async function getHealth(): Promise<Health | null> {
-  try {
-    return await api.get<Health>("/health", { cache: "no-store" });
-  } catch {
-    return null;
-  }
-}
+const CHIPS = [
+  { label: "ซื้อ", href: "/properties?kind=sale" },
+  { label: "เช่า", href: "/properties?kind=rent" },
+  { label: "บ้านเดี่ยว", href: "/properties?type_code=DETACHED_HOUSE" },
+  { label: "คอนโด", href: "/properties?type_code=CONDO" },
+  { label: "ที่ดิน", href: "/properties?type_code=LAND" },
+];
 
 export default async function HomePage() {
-  const health = await getHealth();
+  let featured = [] as Awaited<ReturnType<typeof searchProperties>>["items"];
+  try {
+    featured = (await searchProperties({ per_page: "6", sort: "newest" })).items;
+  } catch {
+    featured = [];
+  }
 
   return (
-    <section className="hero min-h-[70vh] bg-base-100">
-      <div className="hero-content flex-col text-center">
-        <div className="max-w-xl">
-          <h1 className="text-4xl font-bold">หาบ้านในขอนแก่น 🏡</h1>
-          <p className="py-4 opacity-70">
-            ซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน และอาคารพาณิชย์
-            — แพลตฟอร์มอสังหาริมทรัพย์สำหรับชาวขอนแก่น
+    <div>
+      <section className="border-b border-base-200">
+        <div className="mx-auto max-w-4xl px-4 py-10 text-center md:py-14">
+          <p className="mb-3 text-sm font-medium tracking-wide text-primary">อสังหาริมทรัพย์ขอนแก่น</p>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">หาบ้านในขอนแก่น</h1>
+          <p className="mx-auto mt-3 max-w-xl text-base-content/60">
+            ซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน และอาคารพาณิชย์ ในที่เดียว
           </p>
 
-          <div className="card mx-auto mt-4 w-full max-w-sm bg-base-200">
-            <div className="card-body items-center">
-              <span className="text-sm opacity-60">สถานะระบบ (API)</span>
-              {health ? (
-                <div className="flex items-center gap-2">
-                  <span className="badge badge-success">ออนไลน์</span>
-                  <span className="text-sm">
-                    {health.service} · uptime {health.uptime}s
-                  </span>
-                </div>
-              ) : (
-                <span className="badge badge-warning">API ไม่พร้อมใช้งาน</span>
-              )}
-            </div>
+          <form
+            action="/properties"
+            className="mx-auto mt-6 flex max-w-xl items-center gap-2 rounded-2xl border border-base-300 bg-base-100 p-2 shadow-sm focus-within:border-primary"
+          >
+            <LuSearch size={20} className="ml-2 shrink-0 text-base-content/40" />
+            <input
+              name="q"
+              placeholder="ค้นหาทำเล โครงการ หรือประเภททรัพย์"
+              className="min-w-0 flex-1 bg-transparent px-1 outline-none placeholder:text-base-content/40"
+            />
+            <button type="submit" className="btn btn-primary rounded-xl px-6">
+              ค้นหา
+            </button>
+          </form>
+
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            {CHIPS.map((c) => (
+              <Link
+                key={c.label}
+                href={c.href}
+                className="rounded-full border border-base-300 px-4 py-1.5 text-sm text-base-content/70 transition hover:border-primary hover:text-primary"
+              >
+                {c.label}
+              </Link>
+            ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-14">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">ทรัพย์แนะนำ</h2>
+            <p className="mt-1 text-sm text-base-content/60">ทรัพย์ล่าสุดในขอนแก่น</p>
+          </div>
+          <Link href="/properties" className="text-sm font-medium text-primary hover:underline">
+            ดูทั้งหมด →
+          </Link>
+        </div>
+        {featured.length ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((p) => (
+              <PropertyCard key={p.slug} p={p} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-base-200 py-16 text-center text-base-content/50">
+            ยังไม่มีทรัพย์ หรือ API ไม่พร้อมใช้งาน
+          </div>
+        )}
+      </section>
+    </div>
   );
 }

@@ -1,8 +1,22 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark;
+  themes: corporate --default, business --prefersdark;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.theme-icon-sun {
+  display: none;
+}
+[data-theme="business"] .theme-icon-moon {
+  display: none;
+}
+[data-theme="business"] .theme-icon-sun {
+  display: inline-block;
 }

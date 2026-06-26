@@ -57,20 +57,26 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
       )}
 
       {pages > 1 ? (
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {page > 1 ? (
-            <Link href={linkFor(page - 1)} className="btn btn-outline btn-sm">
-              ก่อนหน้า
-            </Link>
-          ) : null}
-          <span className="px-2 text-sm text-base-content/60">
-            {page} / {pages}
-          </span>
-          {page < pages ? (
-            <Link href={linkFor(page + 1)} className="btn btn-outline btn-sm">
-              ถัดไป
-            </Link>
-          ) : null}
+        <div className="mt-8 flex justify-center">
+          <div className="join">
+            {page > 1 ? (
+              <Link href={linkFor(page - 1)} className="btn btn-sm join-item">
+                ก่อนหน้า
+              </Link>
+            ) : (
+              <button className="btn btn-sm join-item btn-disabled">ก่อนหน้า</button>
+            )}
+            <button className="btn btn-sm join-item pointer-events-none">
+              {page} / {pages}
+            </button>
+            {page < pages ? (
+              <Link href={linkFor(page + 1)} className="btn btn-sm join-item">
+                ถัดไป
+              </Link>
+            ) : (
+              <button className="btn btn-sm join-item btn-disabled">ถัดไป</button>
+            )}
+          </div>
         </div>
       ) : null}
     </div>

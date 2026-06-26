@@ -20,3 +20,17 @@ body {
 [data-theme="business"] .theme-icon-sun {
   display: inline-block;
 }
+
+/* daisyUI corner radii. The corporate/business themes ship very square radii
+   (selector:0, field/box:.25rem), which made toggles, badges, buttons, inputs and
+   cards look boxy vs the rounded daisyUI docs. Override the same theme variables
+   daisyUI's border-radius calcs read, so EVERY component rounds at once:
+     --radius-selector → toggle, badge, checkbox, radio   (pill)
+     --radius-field    → button, input, select, tab        (rounded)
+     --radius-box      → card, modal, alert                (rounded) */
+[data-theme="corporate"],
+[data-theme="business"] {
+  --radius-selector: 2rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+}

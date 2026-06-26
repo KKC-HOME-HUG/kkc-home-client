@@ -29,17 +29,16 @@ export default async function HomePage() {
             ซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน และอาคารพาณิชย์ ในที่เดียว
           </p>
 
-          <form
-            action="/properties"
-            className="mx-auto mt-6 flex max-w-xl items-center gap-2 rounded-2xl border border-base-300 bg-base-100 p-2 shadow-sm focus-within:border-primary"
-          >
-            <LuSearch size={20} className="ml-2 shrink-0 text-base-content/40" />
-            <input
-              name="q"
-              placeholder="ค้นหาทำเล โครงการ หรือประเภททรัพย์"
-              className="min-w-0 flex-1 bg-transparent px-1 outline-none placeholder:text-base-content/40"
-            />
-            <button type="submit" className="btn btn-primary rounded-xl px-6">
+          <form action="/properties" className="join mx-auto mt-6 w-full max-w-xl shadow-sm">
+            <label className="input input-bordered join-item flex flex-1 items-center gap-2">
+              <LuSearch size={18} className="opacity-50" />
+              <input
+                name="q"
+                placeholder="ค้นหาทำเล โครงการ หรือประเภททรัพย์"
+                className="grow"
+              />
+            </label>
+            <button type="submit" className="btn btn-primary join-item px-6">
               ค้นหา
             </button>
           </form>

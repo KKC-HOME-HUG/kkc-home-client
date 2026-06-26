@@ -48,4 +48,10 @@ export const api = {
       method: "POST",
       body: data === undefined ? undefined : JSON.stringify(data),
     }),
+  patch: <T>(path: string, data?: unknown, init?: RequestInit) =>
+    request<T>(path, {
+      ...init,
+      method: "PATCH",
+      body: data === undefined ? undefined : JSON.stringify(data),
+    }),
 };

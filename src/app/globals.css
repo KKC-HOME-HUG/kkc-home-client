@@ -34,3 +34,15 @@ body {
   --radius-field: 0.5rem;
   --radius-box: 1rem;
 }
+
+/* No focus outline ring on form fields — daisyUI adds outline:2px on focus; drop it
+   (the border-color change + inset shadow still indicate focus). */
+.input:focus,
+.input:focus-within,
+.select:focus,
+.select:focus-within,
+.textarea:focus,
+.textarea:focus-within {
+  outline: none !important;
+  outline-offset: 0 !important;
+}

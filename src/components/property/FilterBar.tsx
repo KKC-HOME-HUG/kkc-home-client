@@ -90,10 +90,10 @@ export default function FilterBar({
           <div
             tabIndex={0}
             role="button"
-            className={`btn btn-sm gap-1 font-normal ${hasPrice ? "btn-primary" : "btn-outline border-base-300"}`}
+            className={`btn btn-sm gap-1 border-base-content/20 bg-base-100 font-normal hover:bg-base-200 ${hasPrice ? "border-primary text-primary" : "text-base-content/80"}`}
           >
             {priceLabel(priceMin, priceMax)}
-            <LuChevronDown size={14} />
+            <LuChevronDown size={14} className="opacity-60" />
           </div>
           <div
             tabIndex={0}
@@ -130,7 +130,7 @@ export default function FilterBar({
                         setPriceMin(p.min);
                         setPriceMax(p.max);
                       }}
-                      className={`btn btn-xs ${active ? "btn-primary" : "btn-outline border-base-300"}`}
+                      className={`btn btn-xs ${active ? "btn-primary" : "btn-outline border-base-content/20"}`}
                     >
                       {p.label}
                     </button>

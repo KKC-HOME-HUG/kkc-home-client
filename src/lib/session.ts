@@ -42,6 +42,14 @@ export async function apiPatch<T>(path: string, data?: unknown): Promise<T> {
   return api.patch<T>(path, data, authInit(await getToken()));
 }
 
+export async function apiPut<T>(path: string, data?: unknown): Promise<T> {
+  return api.put<T>(path, data, authInit(await getToken()));
+}
+
+export async function apiDel<T>(path: string): Promise<T> {
+  return api.del<T>(path, authInit(await getToken()));
+}
+
 // Current user via /api/auth/me; null when unauthenticated or token rejected.
 export async function getCurrentUser(): Promise<AdminUser | null> {
   if (!(await getToken())) return null;

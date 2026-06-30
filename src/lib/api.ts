@@ -54,4 +54,12 @@ export const api = {
       method: "PATCH",
       body: data === undefined ? undefined : JSON.stringify(data),
     }),
+  put: <T>(path: string, data?: unknown, init?: RequestInit) =>
+    request<T>(path, {
+      ...init,
+      method: "PUT",
+      body: data === undefined ? undefined : JSON.stringify(data),
+    }),
+  del: <T>(path: string, init?: RequestInit) =>
+    request<T>(path, { ...init, method: "DELETE" }),
 };

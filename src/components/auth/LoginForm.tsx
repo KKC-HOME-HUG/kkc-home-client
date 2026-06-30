@@ -9,22 +9,14 @@ export default function LoginForm({ next }: { next: string }) {
   return (
     <form action={action} className="mt-6 space-y-3">
       <input type="hidden" name="next" value={next} />
-      <input
-        name="email"
-        type="email"
-        required
-        autoComplete="email"
-        placeholder="อีเมล"
-        className="input input-bordered w-full"
-      />
-      <input
-        name="password"
-        type="password"
-        required
-        autoComplete="current-password"
-        placeholder="รหัสผ่าน"
-        className="input input-bordered w-full"
-      />
+      <label className="block">
+        <span className="mb-1 block text-sm font-medium">อีเมล</span>
+        <input name="email" type="email" required autoComplete="email" className="input input-bordered w-full" />
+      </label>
+      <label className="block">
+        <span className="mb-1 block text-sm font-medium">รหัสผ่าน</span>
+        <input name="password" type="password" required autoComplete="current-password" className="input input-bordered w-full" />
+      </label>
       {state.error ? <p className="text-sm text-error">{state.error}</p> : null}
       <button type="submit" className="btn btn-primary w-full" disabled={pending}>
         {pending ? "กำลังเข้าสู่ระบบ…" : "เข้าสู่ระบบ"}

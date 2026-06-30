@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminProperty, getAdminMeta, getTambons } from "@/lib/admin-properties";
 import PropertyEditForm from "@/components/admin/PropertyEditForm";
+import MediaManager from "@/components/admin/MediaManager";
 
 export const metadata = { title: "แก้ไขทรัพย์" };
 
@@ -19,6 +20,7 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">{detail.title}</h1>
         <p className="mt-1 font-mono text-sm text-base-content/50">{detail.slug}</p>
       </div>
+      <MediaManager propertyId={detail.id} initial={detail.media} />
       <PropertyEditForm detail={detail} meta={meta} tambons={tambons} />
     </div>
   );

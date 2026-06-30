@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/session";
-
-const STATS = [
-  { label: "ทรัพย์ทั้งหมด", value: "—" },
-  { label: "เผยแพร่อยู่", value: "—" },
-  { label: "Leads ใหม่", value: "—" },
-];
+import { countNewLeads } from "@/lib/admin-leads";
 
 export default async function AdminDashboard() {
-  const user = await getCurrentUser();
+  const [user, newLeads] = await Promise.all([getCurrentUser(), countNewLeads()]);
+  const STATS = [
+    { label: "ทรัพย์ทั้งหมด", value: "—" },
+    { label: "เผยแพร่อยู่", value: "—" },
+    { label: "Leads ใหม่", value: newLeads == null ? "—" : newLeads.toLocaleString("th-TH") },
+  ];
 
   return (
     <div className="space-y-6">

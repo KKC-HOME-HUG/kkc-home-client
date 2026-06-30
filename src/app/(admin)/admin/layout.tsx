@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LuLayoutDashboard, LuBuilding2, LuInbox, LuUsers, LuLogOut } from "react-icons/lu";
+import { LuLayoutDashboard, LuBuilding2, LuInbox, LuUsers, LuSettings, LuLogOut } from "react-icons/lu";
 import Logo from "@/components/ui/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { logoutAction } from "@/lib/auth-actions";
@@ -12,6 +12,7 @@ const NAV: NavItem[] = [
   { href: "/admin/properties", label: "ทรัพย์", icon: <LuBuilding2 size={18} /> },
   { href: "/admin/leads", label: "Leads", icon: <LuInbox size={18} /> },
   { href: "/admin/users", label: "ผู้ใช้งาน", icon: <LuUsers size={18} />, adminOnly: true },
+  { href: "/admin/settings", label: "ตั้งค่า", icon: <LuSettings size={18} /> },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

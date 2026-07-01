@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { AdminMeta, Tambon } from "@/lib/admin-properties";
 
-const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 
 // amphoe → tambon cascade + zone (filtered by amphoe). Tambons are fetched from the
 // public lookup when the amphoe changes; `tambons` seeds the initial list (edit page).

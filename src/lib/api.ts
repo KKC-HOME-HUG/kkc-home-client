@@ -2,7 +2,8 @@
 // NEXT_PUBLIC_* values reach the browser — no privileged secrets here).
 // Loosely typed for now; OpenAPI type-generation is deferred.
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+// Strip any trailing slash so `${BASE_URL}${path}` never produces `//api/...` (404).
+const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 
 export class ApiError extends Error {
   status: number;

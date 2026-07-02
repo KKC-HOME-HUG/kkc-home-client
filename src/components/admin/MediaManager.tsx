@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import {
   DndContext,
   closestCenter,
@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, rectSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { LuStar, LuTrash2, LuUpload, LuGripVertical } from "react-icons/lu";
+import { LuStar, LuTrash2, LuUpload, LuGripVertical, LuImageOff } from "react-icons/lu";
 import {
   uploadImage,
   setCover,
@@ -22,6 +22,10 @@ import {
 
 const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
 const MAX = 5 * 1024 * 1024;
+const LIMIT = 20;
+
+// A grid item may be a real stored image or a temporary one still uploading.
+type UIItem = MediaItem & { pending?: boolean };
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -32,54 +36,87 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
-function Thumb({ m, onCover, onDelete }: { m: MediaItem; onCover: () => void; onDelete: () => void }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: m.id });
+function Thumb({ m, disabled, onCover, onDelete }: { m: UIItem; disabled: boolean; onCover: () => void; onDelete: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: m.id,
+    disabled: disabled || m.pending,
+  });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.4 : 1 };
+  const [broken, setBroken] = useState(false);
 
   return (
     <div ref={setNodeRef} style={style} className="relative overflow-hidden rounded-lg border border-base-200 bg-base-100">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={m.url} alt="" className="aspect-square w-full object-cover" />
-      {m.is_cover ? <span className="badge badge-primary badge-sm absolute left-1 top-1">ปก</span> : null}
-      <button
-        type="button"
-        {...attributes}
-        {...listeners}
-        className="btn btn-xs btn-circle absolute right-1 top-1 cursor-grab"
-        aria-label="ลากเพื่อจัดลำดับ"
-      >
-        <LuGripVertical size={14} />
-      </button>
-      <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-base-100/85 px-1 py-0.5">
-        {m.is_cover ? (
-          <span className="text-xs text-base-content/50">ภาพหน้าปก</span>
-        ) : (
-          <button type="button" onClick={onCover} className="btn btn-ghost btn-xs gap-1">
-            <LuStar size={12} /> ตั้งปก
+      {broken ? (
+        <div className="flex aspect-square w-full items-center justify-center bg-base-200 text-base-content/30">
+          <LuImageOff size={24} />
+        </div>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={m.url} alt="" className="aspect-square w-full object-cover" onError={() => setBroken(true)} />
+      )}
+
+      {m.pending ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-base-100/50">
+          <span className="loading loading-spinner text-primary" />
+        </div>
+      ) : (
+        <>
+          {m.is_cover ? <span className="badge badge-primary badge-sm absolute left-1 top-1">ปก</span> : null}
+          <button
+            type="button"
+            {...attributes}
+            {...listeners}
+            disabled={disabled}
+            className="btn btn-xs btn-circle absolute right-1 top-1 cursor-grab"
+            aria-label="ลากเพื่อจัดลำดับ"
+          >
+            <LuGripVertical size={14} />
           </button>
-        )}
-        <button type="button" onClick={onDelete} className="btn btn-ghost btn-xs text-error" aria-label="ลบ">
-          <LuTrash2 size={12} />
-        </button>
-      </div>
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-base-100/85 px-1 py-0.5">
+            {m.is_cover ? (
+              <span className="text-xs text-base-content/50">ภาพหน้าปก</span>
+            ) : (
+              <button type="button" onClick={onCover} disabled={disabled} className="btn btn-ghost btn-xs gap-1">
+                <LuStar size={12} /> ตั้งปก
+              </button>
+            )}
+            <button type="button" onClick={onDelete} disabled={disabled} className="btn btn-ghost btn-xs text-error" aria-label="ลบ">
+              <LuTrash2 size={12} />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 export default function MediaManager({ propertyId, initial }: { propertyId: string; initial: MediaItem[] }) {
-  const [items, setItems] = useState<MediaItem[]>(initial);
+  const [items, setItems] = useState<UIItem[]>(initial);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [, startTransition] = useTransition();
+  const tmpRef = useRef(0);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  // Warn before a hard leave (refresh / close / external) while an upload is in flight.
+  useEffect(() => {
+    if (!busy) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [busy]);
 
   async function onFiles(files: FileList | null) {
     if (!files?.length) return;
     setError("");
     setBusy(true);
+    let count = items.length;
     for (const file of Array.from(files)) {
-      if (items.length >= 20) {
-        setError("อัปได้สูงสุด 20 รูปต่อทรัพย์");
+      if (count >= LIMIT) {
+        setError(`อัปได้สูงสุด ${LIMIT} รูปต่อทรัพย์`);
         break;
       }
       if (!ACCEPT.includes(file.type)) {
@@ -90,12 +127,25 @@ export default function MediaManager({ propertyId, initial }: { propertyId: stri
         setError(`${file.name}: ไฟล์เกิน 5MB`);
         continue;
       }
+
+      count += 1;
+      const tmpId = `tmp-${tmpRef.current++}`;
+      const localUrl = URL.createObjectURL(file);
+      setItems((prev) => [...prev, { id: tmpId, url: localUrl, is_cover: false, sort_order: count, pending: true }]);
+
       try {
         const dataBase64 = await fileToBase64(file);
         const res = await uploadImage(propertyId, { filename: file.name, contentType: file.type, dataBase64 });
-        if ("error" in res) setError(res.error);
-        else setItems((prev) => [...prev, res.media]);
+        URL.revokeObjectURL(localUrl);
+        if ("error" in res) {
+          setItems((prev) => prev.filter((m) => m.id !== tmpId));
+          setError(res.error);
+        } else {
+          setItems((prev) => prev.map((m) => (m.id === tmpId ? res.media : m)));
+        }
       } catch {
+        URL.revokeObjectURL(localUrl);
+        setItems((prev) => prev.filter((m) => m.id !== tmpId));
         setError(`${file.name}: อ่านไฟล์ไม่สำเร็จ`);
       }
     }
@@ -133,7 +183,7 @@ export default function MediaManager({ propertyId, initial }: { propertyId: stri
     <div className="card border border-base-200 bg-base-100">
       <div className="card-body space-y-3">
         <h2 className="font-semibold">
-          รูปภาพ <span className="text-sm font-normal text-base-content/50">({items.length}/20)</span>
+          รูปภาพ <span className="text-sm font-normal text-base-content/50">({items.length}/{LIMIT})</span>
         </h2>
         <label className={`btn btn-outline btn-sm w-fit gap-1 ${busy ? "btn-disabled" : ""}`}>
           <LuUpload size={16} /> {busy ? "กำลังอัปโหลด…" : "อัปโหลดรูป"}
@@ -142,6 +192,7 @@ export default function MediaManager({ propertyId, initial }: { propertyId: stri
             accept="image/jpeg,image/png,image/webp"
             multiple
             hidden
+            disabled={busy}
             onChange={(e) => onFiles(e.target.files)}
           />
         </label>
@@ -151,7 +202,7 @@ export default function MediaManager({ propertyId, initial }: { propertyId: stri
             <SortableContext items={items.map((m) => m.id)} strategy={rectSortingStrategy}>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                 {items.map((m) => (
-                  <Thumb key={m.id} m={m} onCover={() => onCover(m.id)} onDelete={() => onDelete(m.id)} />
+                  <Thumb key={m.id} m={m} disabled={busy} onCover={() => onCover(m.id)} onDelete={() => onDelete(m.id)} />
                 ))}
               </div>
             </SortableContext>
@@ -159,7 +210,7 @@ export default function MediaManager({ propertyId, initial }: { propertyId: stri
         ) : (
           <p className="text-sm text-base-content/50">ยังไม่มีรูป</p>
         )}
-        <p className="text-xs text-base-content/50">ลากที่มุมขวาบนเพื่อจัดลำดับ · jpg/png/webp ≤ 5MB · สูงสุด 20 รูป</p>
+        <p className="text-xs text-base-content/50">ลากที่มุมขวาบนเพื่อจัดลำดับ · jpg/png/webp ≤ 5MB · สูงสุด {LIMIT} รูป</p>
       </div>
     </div>
   );

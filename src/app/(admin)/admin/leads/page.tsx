@@ -70,7 +70,7 @@ export default async function LeadsPage({
                   <div className="truncate font-medium">{l.name}</div>
                   <div className="text-xs text-base-content/60">{l.phone}</div>
                 </div>
-                <span className={`badge badge-sm shrink-0 ${BADGE[l.status]}`}>{LABEL[l.status]}</span>
+                <span className={`badge badge-sm shrink-0 whitespace-nowrap ${BADGE[l.status]}`}>{LABEL[l.status]}</span>
               </div>
               {l.property ? (
                 <div className="mt-2 truncate text-sm text-base-content/70">{l.property.title}</div>
@@ -116,7 +116,7 @@ export default async function LeadsPage({
                   <td className="text-sm text-base-content/70">{l.property ? l.property.title : <span className="text-base-content/40">—</span>}</td>
                   <td className="text-sm text-base-content/60">{l.source}</td>
                   <td>
-                    <span className={`badge badge-sm ${BADGE[l.status]}`}>{LABEL[l.status]}</span>
+                    <span className={`badge badge-sm whitespace-nowrap ${BADGE[l.status]}`}>{LABEL[l.status]}</span>
                   </td>
                   <td className="text-sm text-base-content/70">{l.handled_by ? l.handled_by.name : <span className="text-base-content/40">—</span>}</td>
                   <td className="text-sm text-base-content/60">{fmt(l.created_at)}</td>

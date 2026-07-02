@@ -61,7 +61,7 @@ export default async function UsersPage({
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className={`badge badge-sm ${u.role === "ADMIN" ? "badge-primary" : "badge-ghost"}`}>{u.role}</span>
-                  <span className={`badge badge-sm badge-outline ${u.isActive ? "badge-success" : "badge-error"}`}>
+                  <span className={`badge badge-sm badge-outline whitespace-nowrap ${u.isActive ? "badge-success" : "badge-error"}`}>
                     {u.isActive ? "ใช้งาน" : "ปิด"}
                   </span>
                 </div>
@@ -109,7 +109,7 @@ export default async function UsersPage({
                     </span>
                   </td>
                   <td>
-                    <span className={`badge badge-sm ${u.isActive ? "badge-success" : "badge-error"} badge-outline`}>
+                    <span className={`badge badge-sm whitespace-nowrap ${u.isActive ? "badge-success" : "badge-error"} badge-outline`}>
                       {u.isActive ? "ใช้งาน" : "ปิด"}
                     </span>
                   </td>

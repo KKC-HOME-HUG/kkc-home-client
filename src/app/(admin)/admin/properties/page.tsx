@@ -60,7 +60,7 @@ export default async function AdminPropertiesPage({
                   <div className="truncate font-medium">{p.title}</div>
                   <div className="font-mono text-xs text-base-content/50">{p.slug}</div>
                 </div>
-                <span className={`badge badge-sm shrink-0 ${p.is_published ? "badge-success" : "badge-ghost"}`}>
+                <span className={`badge badge-sm shrink-0 whitespace-nowrap ${p.is_published ? "badge-success" : "badge-ghost"}`}>
                   {p.is_published ? "เผยแพร่" : "แบบร่าง"}
                 </span>
               </div>
@@ -126,7 +126,7 @@ export default async function AdminPropertiesPage({
                       : <span className="text-base-content/40">—</span>}
                   </td>
                   <td>
-                    <span className={`badge badge-sm ${p.is_published ? "badge-success" : "badge-ghost"}`}>
+                    <span className={`badge badge-sm whitespace-nowrap ${p.is_published ? "badge-success" : "badge-ghost"}`}>
                       {p.is_published ? "เผยแพร่" : "แบบร่าง"}
                     </span>
                   </td>

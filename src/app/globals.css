@@ -46,3 +46,9 @@ body {
   outline: none !important;
   outline-offset: 0 !important;
 }
+
+/* Badges are short labels — never let Thai text wrap into a squished pill.
+   Keep them on one line (the table scrolls if that makes it wider). */
+.badge {
+  white-space: nowrap;
+}

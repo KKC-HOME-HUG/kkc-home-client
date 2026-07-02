@@ -56,7 +56,43 @@ export default async function LeadsPage({
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-base-200 bg-base-100">
+      {/* Cards — phone (< md) */}
+      <div className="space-y-3 md:hidden">
+        {items.length ? (
+          items.map((l) => (
+            <Link
+              key={l.id}
+              href={`/admin/leads/${l.id}`}
+              className="block rounded-xl border border-base-200 bg-base-100 p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate font-medium">{l.name}</div>
+                  <div className="text-xs text-base-content/60">{l.phone}</div>
+                </div>
+                <span className={`badge badge-sm shrink-0 ${BADGE[l.status]}`}>{LABEL[l.status]}</span>
+              </div>
+              {l.property ? (
+                <div className="mt-2 truncate text-sm text-base-content/70">{l.property.title}</div>
+              ) : null}
+              <div className="mt-2 flex flex-wrap items-center gap-x-2 text-xs text-base-content/50">
+                <span>{l.source}</span>
+                <span>·</span>
+                <span>{l.handled_by ? l.handled_by.name : "ยังไม่รับ"}</span>
+                <span>·</span>
+                <span>{fmt(l.created_at)}</span>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="rounded-xl border border-base-200 bg-base-100 py-10 text-center text-sm text-base-content/50">
+            ไม่มี lead
+          </p>
+        )}
+      </div>
+
+      {/* Table — md and up */}
+      <div className="hidden overflow-x-auto rounded-xl border border-base-200 bg-base-100 md:block">
         <table className="table">
           <thead>
             <tr>

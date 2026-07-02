@@ -34,7 +34,7 @@ export default async function AdminPropertiesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">ทรัพย์</h1>
           <p className="mt-1 text-sm text-base-content/60">จัดการประกาศ ({total.toLocaleString("th-TH")} รายการ)</p>
@@ -50,7 +50,51 @@ export default async function AdminPropertiesPage({
         {tab("draft", "แบบร่าง")}
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-base-200 bg-base-100">
+      {/* Cards — phone (< md) */}
+      <div className="space-y-3 md:hidden">
+        {items.length ? (
+          items.map((p) => (
+            <div key={p.id} className="rounded-xl border border-base-200 bg-base-100 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate font-medium">{p.title}</div>
+                  <div className="font-mono text-xs text-base-content/50">{p.slug}</div>
+                </div>
+                <span className={`badge badge-sm shrink-0 ${p.is_published ? "badge-success" : "badge-ghost"}`}>
+                  {p.is_published ? "เผยแพร่" : "แบบร่าง"}
+                </span>
+              </div>
+              <div className="mt-2 text-sm text-base-content/70">
+                {p.type} · {p.zone ?? p.amphoe}
+              </div>
+              <div className="mt-1 text-sm">
+                {p.offers.length ? (
+                  p.offers.map((o) => (
+                    <span key={o.kind} className="mr-3">
+                      {o.kind === "SALE" ? "ขาย " : "เช่า "}
+                      {baht(o.price)}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-base-content/40">—</span>
+                )}
+              </div>
+              <div className="mt-3 flex justify-end">
+                <Link href={`/admin/properties/${p.id}/edit`} className="btn btn-ghost btn-xs">
+                  แก้ไข
+                </Link>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="rounded-xl border border-base-200 bg-base-100 py-10 text-center text-sm text-base-content/50">
+            ยังไม่มีทรัพย์
+          </p>
+        )}
+      </div>
+
+      {/* Table — md and up */}
+      <div className="hidden overflow-x-auto rounded-xl border border-base-200 bg-base-100 md:block">
         <table className="table">
           <thead>
             <tr>

@@ -30,7 +30,7 @@ export default async function UsersPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">ผู้ใช้งาน</h1>
           <p className="mt-1 text-sm text-base-content/60">จัดการทีมงาน ({total.toLocaleString("th-TH")} คน)</p>
@@ -40,7 +40,46 @@ export default async function UsersPage({
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-base-200 bg-base-100">
+      {/* Cards — phone (< md) */}
+      <div className="space-y-3 md:hidden">
+        {items.length ? (
+          items.map((u) => (
+            <div
+              key={u.id}
+              className={`rounded-xl border border-base-200 bg-base-100 p-4 ${u.id === me.id ? "ring-1 ring-accent/30" : ""}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 font-medium">
+                    <span className="truncate">{u.displayName}</span>
+                    {u.id === me.id ? <span className="badge badge-accent badge-sm font-semibold">คุณ</span> : null}
+                  </div>
+                  <div className="truncate text-sm text-base-content/60">{u.email}</div>
+                </div>
+                <UserActiveToggle id={u.id} isActive={u.isActive} self={u.id === me.id} />
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className={`badge badge-sm ${u.role === "ADMIN" ? "badge-primary" : "badge-ghost"}`}>{u.role}</span>
+                  <span className={`badge badge-sm badge-outline ${u.isActive ? "badge-success" : "badge-error"}`}>
+                    {u.isActive ? "ใช้งาน" : "ปิด"}
+                  </span>
+                </div>
+                <Link href={`/admin/users/${u.id}`} className="btn btn-ghost btn-xs">
+                  แก้ไข
+                </Link>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="rounded-xl border border-base-200 bg-base-100 py-10 text-center text-sm text-base-content/50">
+            ไม่มีผู้ใช้ หรือไม่มีสิทธิ์เข้าถึง
+          </p>
+        )}
+      </div>
+
+      {/* Table — md and up */}
+      <div className="hidden overflow-x-auto rounded-xl border border-base-200 bg-base-100 md:block">
         <table className="table">
           <thead>
             <tr>

@@ -7,6 +7,8 @@ import { TYPE_BADGES } from "@/lib/properties";
 import Gallery from "@/components/property/Gallery";
 import MapEmbed from "@/components/property/MapEmbed";
 import ContactForm from "@/components/property/ContactForm";
+import LineContactCard from "@/components/property/LineContactCard";
+import { getSiteSettings } from "@/lib/site-settings";
 
 const baht = (n: number) => `฿${n.toLocaleString("th-TH")}`;
 
@@ -41,6 +43,7 @@ export default async function PropertyDetailPage({
   const { slug } = await params;
   const p = await getProperty(slug);
   if (!p) notFound();
+  const s = await getSiteSettings();
 
   const sale = p.offers.find((o) => o.kind === "SALE");
   const rent = p.offers.find((o) => o.kind === "RENT");
@@ -161,8 +164,11 @@ export default async function PropertyDetailPage({
           </div>
 
           <div className="lg:col-span-1">
-            <div className={`sticky top-20 ${card}`}>
-              <ContactForm slug={p.slug} />
+            <div className="sticky top-20 space-y-4">
+              <LineContactCard lineUrl={s.line_url} phone={s.phone} />
+              <div className={card}>
+                <ContactForm slug={p.slug} />
+              </div>
             </div>
           </div>
         </div>

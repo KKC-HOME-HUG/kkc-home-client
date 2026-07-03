@@ -1,8 +1,13 @@
 import Link from "next/link";
+import { FaLine, FaFacebook, FaTiktok } from "react-icons/fa6";
+import { LuPhone } from "react-icons/lu";
 import Logo from "@/components/ui/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import { getSiteSettings } from "@/lib/site-settings";
 
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
+  const s = await getSiteSettings();
+  const hasSocial = s.line_url || s.facebook_url || s.tiktok_url || s.phone;
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-base-300 bg-base-100/90 shadow-sm backdrop-blur">
@@ -30,6 +35,30 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           <p className="mt-3 max-w-md text-base-content/60">
             แพลตฟอร์มอสังหาริมทรัพย์ขอนแก่น — ซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน และอาคารพาณิชย์
           </p>
+          {hasSocial ? (
+            <div className="mt-5 flex items-center gap-2">
+              {s.line_url ? (
+                <a href={s.line_url} target="_blank" rel="noopener noreferrer" aria-label="LINE" className="btn btn-ghost btn-sm btn-square">
+                  <FaLine size={20} />
+                </a>
+              ) : null}
+              {s.facebook_url ? (
+                <a href={s.facebook_url} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="btn btn-ghost btn-sm btn-square">
+                  <FaFacebook size={20} />
+                </a>
+              ) : null}
+              {s.tiktok_url ? (
+                <a href={s.tiktok_url} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="btn btn-ghost btn-sm btn-square">
+                  <FaTiktok size={18} />
+                </a>
+              ) : null}
+              {s.phone ? (
+                <a href={`tel:${s.phone}`} aria-label="โทร" className="btn btn-ghost btn-sm btn-square">
+                  <LuPhone size={18} />
+                </a>
+              ) : null}
+            </div>
+          ) : null}
           <p className="mt-6 text-base-content/40">© 2026 KKC Home Hug Property</p>
         </div>
       </footer>

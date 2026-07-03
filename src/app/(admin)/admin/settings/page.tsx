@@ -12,7 +12,10 @@ import {
   updateFacility,
   reorderFacilities,
   loadTambons,
+  type ContactSettings,
 } from "@/lib/settings-actions";
+import { apiGet } from "@/lib/session";
+import SiteSettingsForm from "@/components/admin/SiteSettingsForm";
 
 export const metadata = { title: "ตั้งค่า" };
 
@@ -62,6 +65,14 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         onReorder={reorderFacilities}
       />
     );
+  } else if (tab === "contact") {
+    let c: ContactSettings = { line_url: "", facebook_url: "", tiktok_url: "", phone: "" };
+    try {
+      c = { ...c, ...(await apiGet<ContactSettings>("/api/settings/site")) };
+    } catch {
+      /* keep empty */
+    }
+    content = <SiteSettingsForm initial={c} />;
   } else {
     const [zones, amphoes] = await Promise.all([getZones(), getAmphoes()]);
     content = (
@@ -106,6 +117,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         {tabEl("zones", "ย่าน")}
         {tabEl("types", "ประเภททรัพย์")}
         {tabEl("facilities", "สิ่งอำนวยฯ")}
+        {tabEl("contact", "ติดต่อ/โซเชียล")}
       </div>
       {content}
     </div>

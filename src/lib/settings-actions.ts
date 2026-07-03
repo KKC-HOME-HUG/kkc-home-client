@@ -12,6 +12,20 @@ export type Option = { value: string; label: string };
 const RP = () => revalidatePath("/admin/settings");
 const err = (e: unknown, f: string) => (e instanceof ApiError ? e.message : f);
 
+/* ---- site contact/social settings (single record) ---- */
+export type ContactSettings = { line_url: string; facebook_url: string; tiktok_url: string; phone: string };
+
+export async function updateSiteSettings(input: ContactSettings): Promise<Result> {
+  try {
+    await apiPatch("/api/admin/site-settings", input);
+    revalidatePath("/admin/settings");
+    revalidatePath("/", "layout"); // refresh the public footer/detail that read these
+    return {};
+  } catch (e) {
+    return { error: err(e, "บันทึกไม่สำเร็จ") };
+  }
+}
+
 // Tambon options for one amphoe — feeds the zone form's amphoe → tambon cascade.
 export async function loadTambons(amphoeCode: string): Promise<Option[]> {
   if (!amphoeCode) return [];

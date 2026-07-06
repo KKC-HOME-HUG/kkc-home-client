@@ -2,6 +2,11 @@ import Link from "next/link";
 import { LuSearch } from "react-icons/lu";
 import { searchProperties } from "@/lib/properties";
 import PropertyCard from "@/components/property/PropertyCard";
+import type { Metadata } from "next";
+import { getSiteSettings } from "@/lib/site-settings";
+import { getSiteUrl } from "@/lib/site-url";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const CHIPS = [
   { label: "ซื้อ", href: "/properties?kind=sale" },
@@ -19,8 +24,22 @@ export default async function HomePage() {
     featured = [];
   }
 
+  const base = getSiteUrl();
+  const s = await getSiteSettings();
+  const orgLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    name: "KKC Home Hug Property",
+    url: base,
+    logo: `${base}/brand/mark-d.svg`,
+    image: `${base}/brand/mark-d.svg`,
+    areaServed: "ขอนแก่น",
+    ...(s.phone ? { telephone: s.phone } : {}),
+  };
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
       <section className="border-b border-base-200">
         <div className="mx-auto max-w-4xl px-4 py-10 text-center md:py-14">
           <p className="mb-3 text-sm font-medium tracking-wide text-primary">อสังหาริมทรัพย์ขอนแก่น</p>

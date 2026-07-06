@@ -4,7 +4,7 @@ import { searchProperties, getFilterMeta } from "@/lib/properties";
 import PropertyCard from "@/components/property/PropertyCard";
 import FilterBar from "@/components/property/FilterBar";
 
-export const metadata: Metadata = { title: "ค้นหาทรัพย์" };
+export const metadata: Metadata = { title: "ค้นหาทรัพย์", alternates: { canonical: "/properties" } };
 
 type SP = Record<string, string | string[] | undefined>;
 

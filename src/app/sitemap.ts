@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { searchProperties } from "@/lib/properties";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const base = getSiteUrl();
 
   let slugs: string[] = [];
   try {

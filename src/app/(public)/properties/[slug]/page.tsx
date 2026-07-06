@@ -9,6 +9,7 @@ import MapEmbed from "@/components/property/MapEmbed";
 import ContactForm from "@/components/property/ContactForm";
 import LineContactCard from "@/components/property/LineContactCard";
 import { getSiteSettings } from "@/lib/site-settings";
+import { getSiteUrl } from "@/lib/site-url";
 
 const baht = (n: number) => `฿${n.toLocaleString("th-TH")}`;
 
@@ -31,6 +32,7 @@ export async function generateMetadata({
   return {
     title: p.title,
     description: p.description ?? `${p.type.nameTh} ${p.location.amphoe.nameTh}`,
+    alternates: { canonical: `/properties/${p.slug}` },
     openGraph: { title: p.title, images: p.cover_url ? [p.cover_url] : [] },
   };
 }
@@ -58,19 +60,47 @@ export default async function PropertyDetailPage({
   if (p.land_area_sqw) specs.push({ icon: <LuMaximize size={18} />, label: `${p.land_area_sqw} ตร.ว.` });
 
   const card = "rounded-xl bg-base-100 p-5 shadow-sm ring-1 ring-base-200";
+  const base = getSiteUrl();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     name: p.title,
     description: p.description ?? undefined,
     image: p.media.map((m) => m.url),
-    url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/properties/${p.slug}`,
+    url: `${base}/properties/${p.slug}`,
+    ...(p.offers.length
+      ? {
+          offers: p.offers.map((o) => ({
+            "@type": "Offer",
+            price: o.price,
+            priceCurrency: "THB",
+            availability: "https://schema.org/InStock",
+          })),
+        }
+      : {}),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: p.location.tambon?.nameTh ?? p.location.amphoe.nameTh,
+      addressRegion: "ขอนแก่น",
+      addressCountry: "TH",
+    },
+    geo: { "@type": "GeoCoordinates", latitude: p.geo.lat, longitude: p.geo.lng },
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "หน้าแรก", item: base },
+      { "@type": "ListItem", position: 2, name: "ทรัพย์", item: `${base}/properties` },
+      { "@type": "ListItem", position: 3, name: p.title },
+    ],
   };
 
   return (
     <div className="bg-base-200/40">
       <div className="mx-auto max-w-6xl px-4 py-6">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
         <div className="breadcrumbs mb-3 text-sm">
           <ul>

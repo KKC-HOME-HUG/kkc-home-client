@@ -111,13 +111,12 @@ export async function unpublishProperty(fd: FormData) {
   revalidatePath(`/admin/properties/${id}/edit`);
 }
 
-export async function deleteProperty(fd: FormData) {
-  const id = s(fd, "id");
+export async function deleteProperty(id: string): Promise<{ error: string } | void> {
   try {
     await apiDel(`/api/admin/properties/${id}`);
-  } catch {
-    // ignore
+  } catch (e) {
+    return { error: msg(e, "ลบทรัพย์ไม่สำเร็จ") };
   }
   revalidatePath("/admin/properties");
-  redirect("/admin/properties");
+  redirect("/admin/properties?deleted=1"); // NEXT_REDIRECT — must stay outside the try
 }

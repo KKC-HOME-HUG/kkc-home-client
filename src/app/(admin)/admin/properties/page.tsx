@@ -9,7 +9,7 @@ const baht = (n: number) => `฿${n.toLocaleString("th-TH")}`;
 export default async function AdminPropertiesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; status?: string; q?: string }>;
+  searchParams: Promise<{ page?: string; status?: string; q?: string; deleted?: string }>;
 }) {
   const sp = await searchParams;
   const page = sp.page ?? "1";
@@ -34,6 +34,14 @@ export default async function AdminPropertiesPage({
 
   return (
     <div className="space-y-6">
+      {sp.deleted === "1" ? (
+        <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm">
+          <span className="font-medium text-success">ลบทรัพย์แล้ว ✓</span>
+          <Link href="/admin/properties" className="btn btn-ghost btn-xs btn-square" aria-label="ปิด">
+            ✕
+          </Link>
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">ทรัพย์</h1>

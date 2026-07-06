@@ -6,11 +6,12 @@ import {
   saveOffers,
   publishProperty,
   unpublishProperty,
-  deleteProperty,
   type PropFormState,
 } from "@/lib/property-actions";
 import LocationSelect from "./LocationSelect";
 import AttributesEditor from "./AttributesEditor";
+import DeletePropertyButton from "./DeletePropertyButton";
+import SubmitButton from "./SubmitButton";
 import type { AdminDetail, AdminMeta, Tambon } from "@/lib/admin-properties";
 
 const FG: Record<string, string> = {
@@ -221,19 +222,18 @@ export default function PropertyEditForm({
             {detail.is_published ? (
               <form action={unpublishProperty}>
                 <input type="hidden" name="id" value={detail.id} />
-                <button type="submit" className="btn btn-outline btn-sm">ยกเลิกเผยแพร่</button>
+                <SubmitButton className="btn btn-outline btn-sm" pendingLabel="กำลังยกเลิก…">ยกเลิกเผยแพร่</SubmitButton>
               </form>
             ) : (
               <form action={pubAction} className="flex items-center gap-2">
                 <input type="hidden" name="id" value={detail.id} />
-                <button type="submit" className="btn btn-primary btn-sm">เผยแพร่</button>
+                <SubmitButton className="btn btn-primary btn-sm" pendingLabel="กำลังเผยแพร่…">เผยแพร่</SubmitButton>
                 {pub.error ? <span className="text-sm text-error">{pub.error}</span> : null}
               </form>
             )}
-            <form action={deleteProperty} className="ml-auto">
-              <input type="hidden" name="id" value={detail.id} />
-              <button type="submit" className="btn btn-outline btn-error btn-sm">ลบทรัพย์</button>
-            </form>
+            <div className="ml-auto">
+              <DeletePropertyButton id={detail.id} title={detail.title} />
+            </div>
           </div>
           <p className="text-xs text-base-content/50">เผยแพร่ได้ต้องมีข้อเสนอ (AVAILABLE) อย่างน้อย 1 รายการ — บันทึกข้อเสนอก่อน</p>
         </div>

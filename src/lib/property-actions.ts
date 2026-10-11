@@ -7,7 +7,10 @@ import { apiPost, apiPatch, apiPut, apiDel } from "./session";
 
 export type PropFormState = { error?: string; ok?: boolean };
 
-const msg = (e: unknown, fallback: string) => (e instanceof ApiError ? e.message : fallback);
+// Prefer the API's specific reason (envelope `error`, e.g. the publish gate's Thai message)
+// over the generic HTTP status text.
+const msg = (e: unknown, fallback: string) =>
+  e instanceof ApiError ? (typeof e.details === "string" && e.details ? e.details : e.message) : fallback;
 const s = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
 const optNum = (fd: FormData, k: string) => {
   const v = s(fd, k);

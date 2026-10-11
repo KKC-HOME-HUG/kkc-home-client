@@ -235,7 +235,7 @@ export default function PropertyEditForm({
               <DeletePropertyButton id={detail.id} title={detail.title} />
             </div>
           </div>
-          <p className="text-xs text-base-content/50">เผยแพร่ได้ต้องมีข้อเสนอ (AVAILABLE) อย่างน้อย 1 รายการ — บันทึกข้อเสนอก่อน</p>
+          <p className="text-xs text-base-content/50">เผยแพร่ได้ต้องมีทำเล (อำเภอ/ตำบล) และข้อเสนอ (AVAILABLE) อย่างน้อย 1 รายการ — บันทึกก่อน</p>
         </div>
       </div>
     </div>

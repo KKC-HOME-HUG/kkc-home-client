@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { LuPlus } from "react-icons/lu";
-import { listAdminProperties } from "@/lib/admin-properties";
+import { listAdminProperties, type AdminListItem } from "@/lib/admin-properties";
 
 export const metadata = { title: "ทรัพย์" };
 
 const baht = (n: number) => `฿${n.toLocaleString("th-TH")}`;
+
+// Import drafts have no location until it is set in the editor (publishing requires it).
+const place = (p: AdminListItem) =>
+  p.amphoe ? p.zone ?? p.amphoe : <span className="badge badge-warning badge-sm whitespace-nowrap">ยังไม่ระบุทำเล</span>;
 
 export default async function AdminPropertiesPage({
   searchParams,
@@ -73,7 +77,7 @@ export default async function AdminPropertiesPage({
                 </span>
               </div>
               <div className="mt-2 text-sm text-base-content/70">
-                {p.type} · {p.zone ?? p.amphoe}
+                {p.type} · {place(p)}
               </div>
               <div className="mt-1 text-sm">
                 {p.offers.length ? (
@@ -122,7 +126,7 @@ export default async function AdminPropertiesPage({
                   <td className="font-mono text-xs text-base-content/60">{p.slug}</td>
                   <td className="font-medium">{p.title}</td>
                   <td className="text-sm text-base-content/70">{p.type}</td>
-                  <td className="text-sm text-base-content/70">{p.zone ?? p.amphoe}</td>
+                  <td className="text-sm text-base-content/70">{place(p)}</td>
                   <td className="text-sm">
                     {p.offers.length
                       ? p.offers.map((o) => (

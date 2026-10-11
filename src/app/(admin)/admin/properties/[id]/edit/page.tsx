@@ -11,7 +11,8 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
   const [detail, meta] = await Promise.all([getAdminProperty(id), getAdminMeta()]);
   if (!detail || !meta) notFound();
 
-  const tambons = await getTambons(detail.amphoe_code);
+  // Import drafts start with no location — nothing to preload until an amphoe is picked.
+  const tambons = detail.amphoe_code ? await getTambons(detail.amphoe_code) : [];
 
   return (
     <div className="max-w-3xl space-y-6">

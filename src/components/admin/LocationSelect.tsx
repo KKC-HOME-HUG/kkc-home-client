@@ -15,8 +15,8 @@ export default function LocationSelect({
   tambons: initial = [],
 }: {
   meta: AdminMeta;
-  amphoe?: number;
-  tambon?: number;
+  amphoe?: number | null;
+  tambon?: number | null;
   zone?: number | null;
   tambons?: Tambon[];
 }) {

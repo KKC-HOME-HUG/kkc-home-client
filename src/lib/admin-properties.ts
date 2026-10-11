@@ -7,7 +7,8 @@ export type AdminListItem = {
   slug: string;
   title: string;
   type: string;
-  amphoe: string;
+  /** null for location-less import drafts */
+  amphoe: string | null;
   zone: string | null;
   cover_url: string | null;
   is_published: boolean;
@@ -30,8 +31,9 @@ export type AdminDetail = {
   condition: string | null;
   title: string;
   description: string | null;
-  amphoe_code: number;
-  tambon_code: number;
+  /** null for location-less import drafts (must be set before publishing) */
+  amphoe_code: number | null;
+  tambon_code: number | null;
   zone_id: number | null;
   address_text: string | null;
   latitude: number | null;
